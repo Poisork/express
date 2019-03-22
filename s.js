@@ -1,33 +1,22 @@
 const express = require("express");
+const bodyParser = require("body-parser");
+  
 const app = express();
- // static html 
-// app.use(express.static(__dirname, + '/public'));
+  
+// создаем парсер для данных application/x-www-form-urlencoded
+const urlencodedParser = bodyParser.urlencoded({extended: false});
+ 
+app.get("/register", urlencodedParser, function (request, response) {
+    response.sendFile(__dirname + "/register.html");
+});
+app.post("/register", urlencodedParser, function (request, response) {
+    if(request.body.userName === '') return response.sendStatus(400);
+    console.log(request.body);
+    response.send(`${request.body.userName} - ${request.body.userAge}`);
+});
+  
 app.get("/", function(request, response){
-      
-  response.send("<h1>Главная страница</h1>");
+    response.send("Главная страница");
 });
-app.use("/about", function(request, response){
-    
-  let id = request.query.id;
-  let userName = request.query.name;
-  response.send("<h1>Информация</h1><p>id=" + id +"</p><p>name=" + userName + "</p>");
-});
-
-app.use("/r", function(request, response){
-  response.redirect("https://metanit.com")
-});
-
-
-app.use("/users", function(request, response){
-      
-  console.log(request.query);
-  let names = request.query.name;
-  let responseText = "<ul>";
-  for(let i=0; i < names.length; i++){
-      responseText += "<li>" + names[i] + "</li>";
-  }
-  responseText += "</ul>";
-  response.send(responseText);
-});
-
+  
 app.listen(3000);
